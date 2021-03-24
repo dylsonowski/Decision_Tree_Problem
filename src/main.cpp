@@ -1,9 +1,9 @@
-#include <optional>
+#include "Game_Tree.h"
 #include "Board_Representation.h"
 
 int main(int argc, char** argv) {
-	unsigned int w = 3, h = 3;
-	std::optional<unsigned int> depth;
+	unsigned int w = 3, h = 3, depth;
+	bool depthInitialized = false;
 	if (argc > 1) {
 		for (int i = 1; i < argc; i++) {
 			if (static_cast<std::string>(argv[i]) == "-w")
@@ -12,22 +12,31 @@ int main(int argc, char** argv) {
 			if(static_cast<std::string>(argv[i]) == "-h")
 				h = std::stoi(argv[i + 1]);
 
-			if(static_cast<std::string>(argv[i]) == "-d")
+			if (static_cast<std::string>(argv[i]) == "-d") {
 				depth = std::stoi(argv[i + 1]);
+				depthInitialized = true;
+			}
 		}
 	}
 
-	Board_Representation board(w, h);
-	if ((w > 4 || h > 4) && !depth)
+	if ((w > 4 || h > 4) && !depthInitialized)
 		depth = 3;
-	else if ((w <= 4 || h <= 4) && !depth)
+	else if ((w <= 4 || h <= 4) && !depthInitialized)
 		depth = 5;
 
-	board.SetPlateFill(1, 1, 1);
-	board.SetPlateFill(1, 0, 0);
-	std::vector<std::pair<unsigned int, unsigned int>> moves = GenerateLegitMoves(std::make_shared<Board_Representation>(board), false);
+	Game_Tree gameTree(w, h);
+	gameTree.SetDepth(depth);	
 
-	std::cout << board << "\n";
+	while (!gameTree.IsFinalPathComplete()) {
+		gameTree.GenerateGameTree(gameTree.GetRoot(), true, gameTree.GetDepth());
+		gameTree.MinMaxAlgorithm(gameTree.GetRoot(), true);
+		gameTree.FindPath(gameTree.GetRoot());
+	}
+
+	for (int it = 0; it < gameTree.GetFinalPath().size(); it++) {
+		std::cout << gameTree.GetFinalPath().at(it) << " -> ";
+	}
+	std::cout << "END\n";
 	system("pause");
 	return 0;
 }

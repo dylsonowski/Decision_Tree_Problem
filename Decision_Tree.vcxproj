@@ -84,9 +84,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game_Tree.h" />
     <ClInclude Include="src\Board_Representation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game_Tree.cpp" />
     <ClCompile Include="src\Board_Representation.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
